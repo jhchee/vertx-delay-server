@@ -1,6 +1,10 @@
-package github.jhchee.starter
+package github.jhchee.delayserver
 
-import io.vertx.core.*
+import io.vertx.core.DeploymentOptions
+import io.vertx.core.Promise
+import io.vertx.core.Vertx
+import io.vertx.core.VertxOptions
+import io.vertx.core.impl.logging.LoggerFactory
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
@@ -10,16 +14,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainVerticle : CoroutineVerticle() {
+  private val log = LoggerFactory.getLogger(this::class.java)
+
   override fun start(startFuture: Promise<Void>?) {
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
-    router.get("/delay/ms/:milliSeconds").coroutineHandler { ctx ->
-      val milliSeconds = ctx.pathParam("milliSeconds").toLong()
-      delay(milliSeconds)
-      ctx.response().end("Delay for $milliSeconds ms")
+    router.get("/delay/ms/:milliseconds").coroutineHandler { ctx ->
+      val milliseconds = ctx.pathParam("milliseconds").toLong()
+      log.info("Delay for $milliseconds milliseconds")
+      delay(milliseconds)
+      ctx.end("Delay for $milliseconds milliseconds")
     }
-
-    server.requestHandler(router).listen(8888)
+    server.requestHandler(router)
+    server.listen(Integer.getInteger("http.port"), System.getProperty("http.address", "0.0.0.0"))
   }
 
   private fun Route.coroutineHandler(fn: suspend (RoutingContext) -> Unit): Route {
@@ -34,13 +41,3 @@ class MainVerticle : CoroutineVerticle() {
     }
   }
 }
-
-
-//fun main() {
-//  val vertx = Vertx.vertx()
-//  vertx.deployVerticle(
-//    "github.jhchee.starter.vertx.MainVerticle",
-//    DeploymentOptions().setInstances(VertxOptions.DEFAULT_EVENT_LOOP_POOL_SIZE)
-//  )
-//  println("Server running...")
-//}

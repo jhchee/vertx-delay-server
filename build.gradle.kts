@@ -18,7 +18,7 @@ repositories {
 val vertxVersion = "4.3.1"
 val junitJupiterVersion = "5.7.0"
 
-val mainVerticleName = "github.jhchee.starter.MainVerticle"
+val mainVerticleName = "github.jhchee.delayserver.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
 
 val watchForChange = "src/**/*"
@@ -33,8 +33,6 @@ dependencies {
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-lang-kotlin")
-  implementation("io.netty:netty-all")
-  implementation(kotlin("stdlib-jdk8"))
 
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
